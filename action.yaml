@@ -1,0 +1,11 @@
+name: 'Skip on tag mismatch'
+description: 'Will exit the workflow if the tag does not match the version in the package.json'
+runs:
+  using: 'composite'
+  steps:
+    - name: get-npm-version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@main
+    - name: Skip on tag mismatch in package.json
+      if: github.ref_type == 'tag'  && !contains(github.ref, steps.package-version.outputs.current-version)
+      run: echo "Skipping build since tag and version mismatch" && exit 1
